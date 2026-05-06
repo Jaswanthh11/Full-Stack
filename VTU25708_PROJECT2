@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EduTicket | Booking System</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .seat { width: 35px; height: 35px; margin: 5px; border-radius: 4px; cursor: pointer; }
+        .available { background-color: #cbd5e1; }
+        .selected { background-color: #22c55e; }
+        .occupied { background-color: #ef4444; cursor: not-allowed; }
+    </style>
+</head>
+<body class="bg-gray-100 p-8">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const TicketApp = () => {
+            const [selectedSeats, setSelectedSeats] = useState([]);
+            const seatPrice = 150;
+            
+            // Mock occupied seats
+            const occupied = [5, 12, 13, 21];
+            const seats = Array.from({ length: 32 }, (_, i) => i + 1);
+
+            const toggleSeat = (seat) => {
+                if (occupied.includes(seat)) return;
+                if (selectedSeats.includes(seat)) {
+                    setSelectedSeats(selectedSeats.filter(s => s !== seat));
+                } else {
+                    setSelectedSeats([...selectedSeats, seat]);
+                }
+            };
+
+            const handleBooking = () => {
+                alert(`Successfully booked seats: ${selectedSeats.join(', ')}\nTotal: ₹${selectedSeats.length * seatPrice}`);
+                setSelectedSeats([]);
+            };
+
+            return (
+                <div class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-lg">
+                    <h1 class="text-2xl font-bold text-center mb-6 text-blue-600">EduTicket Booking</h1>
+                    
+                    <div class="flex flex-wrap justify-center mb-6">
+                        {seats.map(seat => (
+                            <div 
+                                key={seat}
+                                onClick={() => toggleSeat(seat)}
+                                className={`seat flex items-center justify-center text-xs font-bold
+                                    ${occupied.includes(seat) ? 'occupied' : 
+                                      selectedSeats.includes(seat) ? 'selected text-white' : 'available'}`}
+                            >
+                                {seat}
+                            </div>
+                        ))}
+                    </div>
+
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between mb-2">
+                            <span>Selected Seats:</span>
+                            <span class="font-bold">{selectedSeats.length}</span>
+                        </div>
+                        <div class="flex justify-between mb-4">
+                            <span>Total Price:</span>
+                            <span class="font-bold text-green-600">₹{selectedSeats.length * seatPrice}</span>
+                        </div>
+                        
+                        <button 
+                            disabled={selectedSeats.length === 0}
+                            onClick={handleBooking}
+                            class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold disabled:bg-gray-400 transition"
+                        >
+                            Book Now
+                        </button>
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<TicketApp />);
+    </script>
+</body>
+</html>
